@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css" />
+
+    <title>Document</title>
+  </head>
+  <body>
+    <p>Your IP local : <span id="fts"></span></p>
+    <p>Browser :<span id="browser"></span></p>
+    <p>Layout : <span id="layout"></span></p>
+    <p>Description :<span id="description"></span></p>
+    <p>Version :<span id="version"></span></p>
+    <p>OS :<span id="os"></span></p>
+    <div id="map" style="height: 500px; width: 400px;"></div>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/platform/1.3.6/platform.min.js"
+      integrity="sha512-eYPrm8TgYWg3aa6tvSRZjN4v0Z9Qx69q3RhfSj+Mf89QqwOMqmwSlsVqfp4N8NVAcZe/YeUhh9x/nM2CAOp6cA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script>
+      console.log(platform);
+      document.getElementById("browser").innerText = platform.name;
+      document.getElementById("layout").innerText = platform.layout;
+      document.getElementById("description").innerText = platform.description;
+      document.getElementById("version").innerText = platform.version;
+      document.getElementById("os").innerText = platform.os;
+    </script>
+
+    <!-- ip -->
+
+    <script>
+      let content;
+      // This function fetches the url and prints the content with console
+      async function fetchAndPrint(url) {
+        try {
+          // Use the built-in fetch API to get the response
+          let response = await fetch(url);
+          // Check if the response is ok
+          if (response.ok) {
+            // Get the content as text
+            content = await response.text();
+            // Print the content with console
+            internetinformation(content);
+            document.getElementById("fts").innerHTML = content;
+          } else {
+            // Throw an error if the response is not ok
+            throw new Error(`HTTP error: ${response.status}`);
+          }
+        } catch (error) {
+          // Catch and print any error that occurs
+          console.error(error);
+        }
+      }
+
+      // Call the function with the given url
+      fetchAndPrint("https://ifconfig.me/ip");
+
+      function internetinformation() {
+        const url = `http://ip-api.com/json/${content}`;
+        fetch(url)
+          .then((res) => {
+            return res.json();
+          })
+          .then((data) => {
+            console.log(data);
+          });
+      }
+   
+
+      </script>
+
+
+
+
+
+
+
+
+
+<!-- reverse cordinates and give exact address -->
+
+
+
+<div >
+    <h1>Your Geolocation API</h1>
+    <p>Time Zone : <span id="timezone"></span></p>
+
+    <p>Latitude: <span id="latitude"></span></p>
+    <p>Longitude: <span id="longitude"></span></p>
+
+
+  </div>
+<div >
+    <div id="user-information-detected"></div>
+    <p>IP Address : <span id="ip"></span></p>
+    <p>Type : <span id="Type"></span></p>
+    <p>Effective Type : <span id="Effective"></span></p>
+    <p>Downlink : <span id="Downlink"></span></p>
+    <p>RTT : <span id="RTT"></span></p>
+    <p>Save data : <span id="Save data"></span></p>
+    
+Residential = <span id="residential"></span><br>
+City_District = <span id="city_district"></span><br>
+Town = <span id="town"></span><br>
+State = <span id="state"></span><br>
+ISO3166-2-lvl4 = <span id="ISO3166"></span><br>
+Postcode = <span id="postcode"></span><br>
+Country = <span id="country"></span><br>
+Country_code =<span id="country_code"></span><br>
+<div >
+    Address :) =<span id="result"></span><br>
+</div>
+
+
+
+
+</div>
+
+
+
+    
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+<script>
+// A function to fetch and print the IP address from a given URL
+function fetchAndPrint(url) {
+  $.get(url, function(data) {
+    // Print the IP address to the console
+    console.log("Your IP address is: " + data);
+    document.getElementById("ip").innerHTML = data ; 
+  });
+}
+
+// A function to get and print the connection information
+function getConnectionInfo() {
+  // Get the connection object from the navigator
+  var connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  // Check if the connection object exists
+  if (connection) {
+    // Print the connection information to the console
+    console.log("Your connection information is:");
+    console.log("Type: " + connection.type); // This is the new line that prints the connection type
+    console.log("Effective type: " + connection.effectiveType);
+    console.log("Downlink: " + connection.downlink + " Mbps");
+    console.log("RTT: " + connection.rtt + " ms");
+    console.log("Save data: " + connection.saveData);
+    document.getElementById("Type").innerHTML = connection.type;
+    document.getElementById("Effective").innerHTML = connection.effectiveType ;
+    document.getElementById("Downlink").innerHTML = connection.downlink + " Mbps";
+    document.getElementById("RTT").innerHTML = connection.rtt + " ms";
+    document.getElementById("Save data").innerHTML = connection.saveData;
+  } else {
+    // Print a message if the connection object is not supported
+    console.log("Sorry, your browser does not support the connection API.");
+  }
+}
+
+// Call the functions when the document is ready
+$(document).ready(function() {
+  fetchAndPrint("https://ifconfig.me/ip");
+  getConnectionInfo();
+});
+
+
+
+var latitude, longitude;  
+
+var livemap;
+livemap = navigator.geolocation.watchPosition(function(position) {
+  // Get the latitude and longitude
+  latitude = position.coords.latitude;
+   longitude = position.coords.longitude;
+
+  // Print the length and width by hand
+  console.log("Latitude:", latitude);
+  console.log("Longitude:", longitude);
+  
+        // const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+console.log(position);
+     // Display latitude and longitude on the web page
+     document.getElementById("latitude").innerHTML = latitude;
+     document.getElementById("longitude").innerHTML = longitude;
+//
+//
+//
+//
+// const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+// console.log(timezone);
+// var d = new Date();
+// var gmtHours = -d.getTimezoneOffset()/60;
+// console.log("The local time zone is: GMT " + gmtHours);
+
+//
+//
+//
+//
+
+  
+
+  // Enter the IP
+  var url = "https://nominatim.openstreetmap.org/reverse?lat=" + latitude + "&lon=" + longitude;
+
+  // Convert the XML data to JSON
+  var xhr = new XMLHttpRequest();
+  let response;
+  
+  function loadXml(){
+    xhr.onreadystatechange = function (){
+    if (this.status === 200 && this.readyState==4 ) {
+      response = this.responseXML.documentElement;
+    //   var json = new DOMParser().parseFromString(xml, "text/xml").documentElement.textContent;
+    console.log(response);
+      // Type the data on the console
+//       
+document.getElementById("residential").innerHTML = response.getElementsByTagName("residential")[0].childNodes[0].nodeValue;
+document.getElementById("city_district").innerHTML = response.getElementsByTagName("city_district")[0].childNodes[0].nodeValue;
+document.getElementById("town").innerHTML = response.getElementsByTagName("town")[0].childNodes[0].nodeValue;
+document.getElementById("state").innerHTML = response.getElementsByTagName("state")[0].childNodes[0].nodeValue;
+document.getElementById("ISO3166").innerHTML = response.getElementsByTagName("ISO3166-2-lvl4")[0].childNodes[0].nodeValue;
+document.getElementById("postcode").innerHTML = response.getElementsByTagName("postcode")[0].childNodes[0].nodeValue;
+document.getElementById("country").innerHTML = response.getElementsByTagName("country")[0].childNodes[0].nodeValue;
+document.getElementById("country_code").innerHTML = response.getElementsByTagName("country_code")[0].childNodes[0].nodeValue;
+document.getElementById("result").innerHTML = response.getElementsByTagName("result")[0].childNodes[0].nodeValue;
+
+
+
+    }
+  }
+  };
+  xhr.open("GET", "https://nominatim.openstreetmap.org/reverse?lat=" + latitude + "&lon=" + longitude ,true );
+  xhr.send();
+  loadXml()
+});
+
+</script>
+<script>
+
+</script>
+<!--END reverse cordinates and give exact address -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- leaflet map with cordinates -->
+
+<script>
+    // Define two variables for latitude and longitude
+    var latitude;
+    var longitude;
+
+    // Determine the location by navigator location coordinates with watch position
+    navigator.geolocation.watchPosition(function(position) {
+      latitude = position.coords.latitude;
+      longitude = position.coords.longitude;
+      console.log("Latitude: " + latitude + ", Longitude: " + longitude);
+
+      // Create a Leaflet map object and set the view to the current coordinates
+      var map = L.map('map').setView([latitude, longitude], 17);
+
+      // Add a tile layer to the map
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: 'Map data © <a href="^5^">OpenStreetMap</a> contributors, <a href="^6^">CC-BY-SA</a>, Imagery © <a href="^7^">CloudMade</a>',
+        maxZoom: 18
+      }).addTo(map);
+
+      // Use a local image file as a custom marker icon in Leaflet.js
+      var customIcon = L.icon({
+        iconUrl: './customicon.png', // The relative URL of the image file
+        iconSize: [50, 50], // The size of the icon
+        iconAnchor: [25, 50], // The point of the icon which will correspond to the marker's location
+        popupAnchor: [0, -50] // The point from which the popup should open relative to the iconAnchor
+      });
+
+      // Add a marker with the custom icon to the map
+      L.marker([latitude, longitude], {icon: customIcon}).addTo(map)
+        .bindPopup('This is your location.')
+        .openPopup();
+    });
+ 
+
+</script>
+<!--END  leaflet map with cordinates -->
+
+
+
+
+
+
+
+
+
+
+
+  </body>
+</html>
