@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css" />
+    <link rel="stylesheet" href="./style.css">
+    <link rel="shortcut icon" href="./ipico.png" type="image/x-icon">
+    
+    <title>IP Location & Information</title>
+</head>
+<body>
+<div class="container">
+
+    <header></header>
+    <main>
+<article class="article1">
+    <hr>
+    <h1>Your Geolocation </h1>
+    <hr>
+    <p>Time Zone : <span id="timezone"></span></p>
+    <p>IP Address : <span id="ip"></span></p>
+    <p>Latitude: <span id="latitude"></span></p>
+    <p>Longitude: <span id="longitude"></span></p>
+    <p>Date (Hijri): <span id="hijriDate"></span></p>
+    <p>gregorianDate: <span id="gregorianDate"></span></p>
+ 
+    <hr>
+
+    <h1>Prayer Times</h1>
+    <hr>
+    <p>Sunrise Time: <span id="sunrise"></span></p>
+    <p>Sunset Time: <span id="sunset"></span></p>
+    <p>Fajr Prayer Time: <span id="fajr"></span></p>
+    <p>Dhuhr Prayer Time: <span id="dhuhr"></span></p>
+    <p>Asr Prayer Time: <span id="asr"></span></p>
+    <p>Maghrib Prayer Time: <span id="maghrib"></span></p>
+    <p>Isha Prayer Time: <span id="isha"></span></p>
+
+    <p>Imsak Time: <span id="Imsak"></span></p>
+    <p>Midnight Time: <span id="Midnight"></span></p>
+    <img src="./signe windows mileviana.png" alt="" srcset="">
+
+</article>
+<article class="article2">
+    
+      <!--HTML navigator browser -->
+      <hr>
+      <h1>Navigator Browser</h1>
+      <hr>
+      <p>Browser :<span id="browser"></span></p>
+  <p>OS :<span id="os"></span></p>
+  <p>Version :<span id="version"></span></p>
+  <p>Layout : <span id="layout"></span></p>
+  <p>Description :<span id="description"></span></p>
+    <!--END HTML navigator browser -->
+  
+      <!--HTML speed and IP and ADRESS -->
+  <hr>
+  <h1>Connection information</h1>
+  <hr>
+      <div class="residence">
+          <div id="user-information-detected"></div>
+          
+          <p>Type : <span id="type"></span></p>
+          <p>Effective Type : <span id="effective"></span></p>
+          <p>Downlink : <span id="downlink"></span></p>
+          <p>RTT : <span id="rtt"></span></p>
+          <p>Save data : <span id="save-data"></span></p>
+          <hr>
+          <h1>Your Address </h1>
+          <hr>
+          <p>Residential = <span id="residential"></span></p>
+          <p>City District = <span id="city-district"></span></p>
+          <p>Town = <span id="town"></span></p>
+          <p>State = <span id="state"></span></p>
+          <p>ISO3166-2-lvl4 = <span id="iso3166"></span></p>
+          <p>Postcode = <span id="postcode"></span></p>
+          <p>Country = <span id="country"></span></p>
+          <p>Country code =<span id="country-code"></span></p>
+      
+      
+      
+      </div>
+  
+  
+  
+      <!--END HTML speed and IP and ADRESS -->
+</article>
+
+    </main>
+    <aside>
+
+        <div  id="map" style="height: 500px; width: 500px;"></div>
+        <hr>
+        <div class="resulta">
+            
+            Address :) =<span id="result"></span><br>
+        </div>
+        <hr>
+    </aside>
+
+
+
+
+    <!-- script for html -->
+</div> 
+<script>
+    function getPrayerTimes(latitude, longitude) {
+      // ADHAN PRAYER TIMES API endpoint
+      const url = `https://api.aladhan.com/v1/timings?latitude=${latitude}&longitude=${longitude}&method=4`;
+
+      fetch(url)
+        .then((response) => response.json())
+        .then((data) => {
+          
+      const timings = data.data.timings;
+      
+      const prayerTimes = data.data.timings;
+      const readable = data.data.date.readable ;
+      const forday  = data.data.date.hijri.weekday.ar;
+      
+      const hijriday = data.data.date.hijri.day;
+      const hijrmonth = data.data.date.hijri.month.ar;
+      const hijryear = data.data.date.hijri.year;
+      const hijriDate = forday +' '+ hijriday +' '+ hijrmonth +' '+ hijryear;
+
+      
+      
+      const gregorianDate = data.data.date.gregorian.date;
+      const timezone = data.data.meta.timezone;
+    
+      const sunrise = timings.Sunrise;
+      const sunset = timings.Sunset;
+      const fajr = timings.Fajr;
+      const dhuhr = timings.Dhuhr;
+      const asr = timings.Asr;
+      const maghrib = timings.Maghrib;
+      const isha = timings.Isha;
+      const Imsak = timings.Imsak;
+      const Midnight = timings.Midnight;
+
+
+
+
+          // Display prayer times on the web page
+          document.getElementById("fajr").innerHTML = fajr;
+          document.getElementById("dhuhr").innerHTML = dhuhr;
+          document.getElementById("asr").innerHTML = asr;
+          document.getElementById("maghrib").innerHTML = maghrib;
+          document.getElementById("isha").innerHTML = isha;
+          document.getElementById("hijriDate").innerHTML = hijriDate;
+          document.getElementById("gregorianDate").innerHTML = gregorianDate;
+          document.getElementById("Imsak").innerHTML = Imsak;
+          document.getElementById("Midnight").innerHTML = Midnight;
+          document.getElementById("timezone").innerHTML = timezone;
+          document.getElementById("sunrise").innerHTML = sunrise;
+          document.getElementById("sunset").innerHTML = sunset;
+          console.log(data);
+
+        });
+    }
+
+    // Get user's current location using Geolocation API
+    navigator.geolocation.watchPosition(
+      (position) => {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+
+        // Display latitude and longitude on the web page
+        document.getElementById("latitude").innerHTML = latitude;
+        document.getElementById("longitude").innerHTML = longitude;
+
+        // Call getPrayerTimes function to get prayer times for the user's location
+        getPrayerTimes(latitude, longitude);
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+  </script>
+
+  <!-- navigator browser -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/platform/1.3.6/platform.min.js" integrity="sha512-eYPrm8TgYWg3aa6tvSRZjN4v0Z9Qx69q3RhfSj+Mf89QqwOMqmwSlsVqfp4N8NVAcZe/YeUhh9x/nM2CAOp6cA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script>
+      console.log(platform);
+      document.getElementById("browser").innerText = platform.name ;
+      document.getElementById("layout").innerText = platform.layout ;
+      document.getElementById("description").innerText = platform.description ;
+      document.getElementById("version").innerText = platform.version ;
+      document.getElementById("os").innerText = platform.os ;
+  </script>
+
+  <!--END navigator browser -->
+
+
+
+
+  <!-- speed and IP and ADRESS -->
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+
+// A function to fetch and print the IP address from a given URL
+function fetchAndPrint(url) {
+$.get(url, function(data) {
+  // Print the IP address to the console
+  console.log("Your IP address is: " + data);
+  document.getElementById("ip").innerHTML = data ; 
+});
+}
+
+// A function to get and print the connection information
+function getConnectionInfo() {
+// Get the connection object from the navigator
+var connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+// Check if the connection object exists
+if (connection) {
+  // Print the connection information to the console
+  console.log("Your connection information is:");
+  console.log("Type: " + connection.type); 
+  console.log("Effective type: " + connection.effectiveType);
+  console.log("Downlink: " + connection.downlink + " Mbps");
+  console.log("RTT: " + connection.rtt + " ms");
+  console.log("Save data: " + connection.saveData);
+
+  // Print the connection information to the HTML document
+  document.getElementById("type").innerHTML = connection.type;
+  document.getElementById("effective").innerHTML = connection.effectiveType;
+  document.getElementById("downlink").innerHTML = connection.downlink;
+  document.getElementById("rtt").innerHTML = connection.rtt;
+  document.getElementById("save-data").innerHTML = connection.saveData;
+}
+}
+var description;
+// A function to get and print the geolocation information
+function getGeolocationInfo() {
+// Check if the geolocation API is supported by the browser
+if (navigator.geolocation) {
+   // Get the geolocation coordinates
+   navigator.geolocation.watchPosition(function(position) {
+     // Get the latitude and longitude
+     var latitude = position.coords.latitude;
+     var longitude = position.coords.longitude;
+
+     // Get the time zone ID
+     var timeZoneID = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+     // Print the latitude, longitude, and time zone ID to the console
+     console.log(`Latitude: ${latitude}`);
+     console.log(`Longitude: ${longitude}`);
+     console.log(`Time zone ID: ${timeZoneID}`);
+
+     // Print the latitude, longitude, and time zone ID to the HTML document
+    //  document.getElementById('latitude').innerHTML = latitude;
+    //  document.getElementById('longitude').innerHTML = longitude;
+    //  document.getElementById('timezone').innerHTML = timeZoneID;
+
+     // Get the reverse geocoding information from a given URL
+     var url = "https://nominatim.openstreetmap.org/reverse?lat=" + latitude + "&lon=" + longitude + "&format=json";
+     $.getJSON(url, function(data) {
+       // Print the reverse geocoding information to the console
+       console.log("Your reverse geocoding information is:");
+       console.log(data);
+      
+      
+
+       // Print the reverse geocoding information to the HTML document
+       document.getElementById('residential').innerHTML = data.address.residential;
+       document.getElementById('city-district').innerHTML = data.address.city_district;
+       document.getElementById('town').innerHTML = data.address.town;
+       document.getElementById('state').innerHTML = data.address.state;
+       document.getElementById('iso3166').innerHTML = data.address.iso3166_2;
+       document.getElementById('postcode').innerHTML = data.address.postcode;
+       document.getElementById('country').innerHTML = data.address.country;
+       document.getElementById('country-code').innerHTML = data.address.country_code;
+
+       // Print the formatted address to the HTML document
+       var result = data.display_name;
+       document.getElementById('result').innerHTML = result;
+     });
+   });
+} else {
+  // Print an error message if the geolocation API is not supported
+  console.log("Geolocation is not supported by this browser.");
+}
+}
+
+// Call the functions when the window loads
+window.onload = function() {
+// Fetch and print the IP address from a given URL
+var ipUrl = "https://ifconfig.me/ip";
+fetchAndPrint(ipUrl);
+
+// Get and print the connection information
+getConnectionInfo();
+
+// Get and print the geolocation information
+getGeolocationInfo();
+}
+
+</script>
+
+  <!--END speed and IP and ADRESS -->
+<!--END script for html -->
+
+
+
+
+
+
+
+    <script src="./app.js"></script>
+    
+</body>
+</html>
